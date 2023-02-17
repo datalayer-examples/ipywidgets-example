@@ -1,0 +1,112 @@
+[build-system]
+requires = [
+    "hatchling>=1.3.1",
+    "jupyterlab==4.0.0a34",
+]
+build-backend = "hatchling.build"
+
+[project]
+name = "ipywidgets_example"
+description = "A Custom Jupyter Widget Library"
+readme = "README.md"
+license = { file = "LICENSE.txt" }
+requires-python = ">=3.7"
+authors = [
+    { name = "Eric Charles", email = "eric@datalayer.io" },
+]
+keywords = [
+    "IPython",
+    "Jupyter",
+    "Widgets",
+]
+classifiers = [
+    "Framework :: Jupyter",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: BSD License",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+]
+dependencies = [
+    "ipywidgets>=7.0.0",
+]
+version = "0.1.0.dev0"
+
+[project.optional-dependencies]
+docs = [
+    "jupyter_sphinx",
+    "nbsphinx",
+    "nbsphinx-link",
+    "pypandoc",
+    "pytest_check_links",
+    "recommonmark",
+    "sphinx>=1.5",
+    "sphinx_rtd_theme",
+]
+examples = []
+test = [
+    "nbval",
+    "pytest-cov",
+    "pytest>=6.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/datalayer-examples/ipywidgets-example"
+
+[tool.hatch.build]
+artifacts = [
+    "ipywidgets_example/nbextension/index.*",
+    "ipywidgets_example/labextension/*.tgz",
+    "ipywidgets_example/labextension",
+]
+
+[tool.hatch.build.targets.wheel.shared-data]
+"ipywidgets_example/nbextension" = "share/jupyter/nbextensions/ipywidgets_example"
+"ipywidgets_example/labextension" = "share/jupyter/labextensions/ipywidgets_example"
+"./install.json" = "share/jupyter/labextensions/ipywidgets_example/install.json"
+"./ipywidgets_example.json" = "etc/jupyter/nbconfig/notebook.d/ipywidgets_example.json"
+
+[tool.hatch.build.targets.sdist]
+exclude = [
+    ".github",
+]
+
+[tool.hatch.build.hooks.jupyter-builder]
+build-function = "hatch_jupyter_builder.npm_builder"
+ensured-targets = [
+    "ipywidgets_example/nbextension/index.js",
+    "ipywidgets_example/labextension/package.json",
+]
+skip-if-exists = [
+    "ipywidgets_example/nbextension/index.js",
+    "ipywidgets_example/labextension/package.json",
+]
+dependencies = [
+    "hatch-jupyter-builder>=0.5.0",
+]
+
+[tool.hatch.build.hooks.jupyter-builder.build-kwargs]
+path = "."
+build_cmd = "build:prod"
+
+[tool.tbump]
+field = [
+    { name = "channel", default = "" },
+    { name = "release", default = "" },
+]
+file = [
+    { src = "pyproject.toml", version_template = "version = \"{major}.{minor}.{patch}{channel}{release}\"" },
+    { src = "ipywidgets_example/_version.py" },
+]
+
+[tool.tbump.version]
+current = "0.1.0.dev0"
+regex = "(?P<major>\\d+)\\.(?P<minor>\\d+)\\.(?P<patch>\\d+)((?P<channel>a|b|rc|.dev)(?P<release>\\d+))?"
+
+[tool.tbump.git]
+message_template = "Bump to {new_version}"
+tag_template = "v{new_version}"

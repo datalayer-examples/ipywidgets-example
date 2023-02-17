@@ -1,0 +1,5 @@
+{
+  "load_extensions": {
+    "ipywidgets_example/extension": true
+  }
+}
